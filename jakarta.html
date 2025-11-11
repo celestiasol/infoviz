@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JAKARTA</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Helvetica, sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .content {
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    /* Menu bar */
+    .menu-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #ffffff;
+      display: flex;
+      justify-content: space-around;
+      border-top: 2px solid #d7d7d7;
+    }
+
+    .menu-item {
+      color: #ff0000;
+      text-decoration: none;
+      flex: 1;
+      text-align: center;
+      padding: 30px 0;
+      transition: background-color 0.3s;
+      cursor: pointer;
+    }
+
+    .menu-item:hover {
+      background-color: #ff0000b5;
+      color: #ffffff;
+    }
+
+    .menu-item.active {
+      background-color: #ff0000;
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    /* Layout for Menu 1 */
+    .menu1-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+
+    .menu1-right {
+    flex: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    }
+
+    .menu1-left {
+    flex: 2;
+    display: grid;
+    grid-template-rows: auto 1fr auto; /* title | square area | slider */
+    align-items: center;
+    justify-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+    }
+
+    /* square-area centers content perfectly */
+    .square-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    }
+
+    /* The square itself */
+    .square {
+    aspect-ratio: 1 / 1;
+    width: 50%;          /* controls how big the square is */
+    max-width: 600px;    /* stops it from going too big */
+    background-color: #e0e0e0;
+    box-sizing: border-box;
+
+    /* perfect centering within the square-area */
+    display: flex;
+    /* align-items: center; */
+    /* justify-content: center; */
+    margin: 0 auto;
+    position: relative;
+    }
+
+    .person {
+    position: absolute;
+    width: 2.5px;
+    height: 2.5px;
+    background-color: red; /* tiny dot representing a person */
+    border-radius: 50%;
+    }
+
+    /* scale text */
+    .scale-label {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: #555;
+    text-align: center;
+    }
+
+    /* slider container stays at bottom */
+    .slider-container {
+    width: 80%;
+    text-align: center;
+    }
+
+    .year-slider {
+      width: 100%;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    .year-value {
+      font-weight: bold;
+      font-size: 1.5em;
+    }
+
+    h1 {
+      margin: 10px 0;
+    }
+
+    p {
+      font-size: 1em;
+      line-height: 1.2em;
+    }
+
+    /* ===== MENU 2 LAYOUT ===== */
+    .menu2-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    }
+
+    .menu2-left {
+    flex: 2;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    align-items: center;
+    justify-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+    }
+
+    .menu2-right {
+    flex: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    }
+
+    /* Rectangle and smoke overlay */
+    .rectangle-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    }
+
+    .rectangle {
+    width: 90%;
+    aspect-ratio: 16 / 9;
+    background-color: #ccc;
+    border: 2px solid #333;
+    position: relative;
+    overflow: hidden;
+    }
+
+    .rectangle-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* makes image cover the rectangle fully without stretching */
+    display: block;
+    }
+
+    .smoke-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, rgba(100, 100, 100, 0.5), rgba(0, 0, 0, 0.8));
+    opacity: 0; /* starts invisible */
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    }
+
+    /* ===== MENU 3 LAYOUT (Updated) ===== */
+    .menu3-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    }
+
+    /* Left 2/3: racing bars */
+    .menu3-left {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    }
+
+    /* Right 1/3: text area */
+    .menu3-right {
+    flex: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    }
+
+    .bar-set {
+    width: 90%;
+    margin: 20px 0;
+    }
+
+    .bar-title {
+    font-weight: bold;
+    margin-bottom: 30px;
+    text-align: left;
+    }
+
+    .bar-track-container {
+    position: relative;
+    width: 90%; /* match bar width */
+    }
+
+    .bar-track {
+    height: 20px; /* bar thickness */
+    background-color: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    }
+
+    .bar-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    background-color: #ff0000;
+    border-radius: 10px 0 0 10px;
+    transition: width linear;
+    }
+
+    .bar-car {
+    position: absolute;
+    top: -30px; /* move above the bar */
+    left: 0;
+    font-size: 24px;
+    transition: left linear;
+    transform: scaleX(-1); /* flipped horizontally */
+    pointer-events: none;
+    }
+
+    .bar-label {
+    text-align: left;
+    margin-top: 6px;
+    font-size: 0.9em;
+    color: #555;
+    }
+
+    .bar-axis {
+    width: 75%;
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-top: 10px;
+    position: relative;
+    }
+
+    .bar-axis span:first-child {
+    position: relative;
+    left: -75px; /* move 1950 left */
+    }
+
+    /* Panel container */
+    .ref-panel {
+      position: fixed;
+      top: 0;
+      left: -33%;       /* hide panel offscreen */
+      width: 33%;
+      height: 100%;
+      background-color: white;
+      display: flex;
+      transition: left 0.3s ease;
+      z-index: 1002;
+      border-right: 2px solid red;
+    }
+
+    /* Tab button (small, sticks out) */
+    .ref-tab {
+      transform: rotate(90deg);
+      position: absolute;
+      right: -80px;        /* sticks outside panel */
+      top: 25%;
+      background-color: white;
+      color: red;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-weight: bold;
+      border-radius: 10px 10px 0 0;
+      white-space: nowrap;
+      z-index: 1003;
+      border-right: 2px solid red;
+      border-top: 2px solid red;
+      border-left: 2px solid red;
+    }
+
+
+    /* Panel content */
+    .ref-content {
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .ref-content h2 {
+      margin-top: 0;
+      font-size: 1.5em;
+    }
+
+    .ref-content ul {
+      list-style: decimal inside;
+      padding-left: 0;
+    }
+
+    .ref-content ul li {
+      margin-bottom: 20px;
+      line-height: 1.4em;
+    }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      z-index: 1000;
+      background-color: rgba(0,0,0,0.3);
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Reference Panel -->
+  <div class="ref-panel" id="refPanel">
+    <div class="ref-tab" id="refTab">References</div>
+    <div class="ref-content" id="refContent">
+      <h2>References</h2>
+      <ul>
+        <li>Japan International Cooperation Agency, Mitsubishi Heavy Industries, Ltd, & Mitsubishi Research Institute, Inc. (2019). Preparatory Survey on Intelligent Transport System Project to Mitigate Traffic Congestion in Jakarta (PPP Infrastructure Project) Final report. In https://openjicareport.jica.go.jp/ (OS-JR 15-019). Retrieved November 10, 2025, from https://openjicareport.jica.go.jp/pdf/12229852_01.pdf</li>
+        <li>Maritime and Investment Affairs of the Republic of Indonesia & United Nations Office for Project Services. (2024). A Socio-Economic study on the integration of environmentally friendly mass public transportation in Jakarta, Bogor, Depok, Tangerang, and Bekasi Region (Jabodetabek). Coordinating Ministry for Maritime and Investment Affairs of the Republic of Indonesia and United Nations Office for Project Services (UNOPS). https://maritim.go.id/uploads/magazine/20241021153528-2024-10-21magazine153520.pdf</li>
+        <li>Jakarta air pollution, There are 23 million vehicles then auction. (2023). VOI. https://voi.id/en/news/304657</li>
+        <li>Soemarko, D. S., Fadlyana, E., Haryanto, B., Buftheim, S., Hartono, B., Wasito, E., & Basrowi, R. W. (2023). Linking Jakarta’s typical Indonesian urban context, air pollution, and child health. The Open Public Health Journal, 16(1). https://doi.org/10.2174/18749445-v16-e230831-2023-109</li>
+        <li>Kusumaningtyas, S. D. A., Aldrian, E., Wati, T., Atmoko, D., & Sunaryo, S. (2018). The Recent State of Ambient Air Quality in Jakarta. Aerosol and Air Quality Research, 18(9), 2343–2354. https://doi.org/10.4209/aaqr.2017.10.0391</li>
+        <li>APSN | Jakarta’s global traffic ranking improves, but congestion worsens. (2024, January 16). https://www.asia-pacific-solidarity.net/news/2024-01-16/jakartas-global-traffic-ranking-improves-congestion-worsens.html</li>
+        <li>Air Quality Index in Jakarta. (2025, May 15). Kaggle. https://www.kaggle.com/datasets/senadu34/air-quality-index-in-jakarta-2010-2021</li>
+        <li>Jakarta Cities, Understanding the capital region’s urban landscape. (n.d.). ekaputrawisata.com.</li>
+        <li>World Population Review. (2025, November 7). Jakarta Population 2025. https://worldpopulationreview.com/cities/indonesia/jakarta</li>
+        <li>Google Maps. (n.d.). Google Maps. Retrieved November 10, 2025, from https://maps.google.com/</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Optional overlay for clicking outside -->
+  <div class="overlay" id="overlay"></div>
+
+  <div class="content" id="content">
+    <!-- Default Menu 1 layout -->
+    <div class="menu1-container">
+        <div class="menu1-left">
+            <div class="menu1-title">
+                <h1>there's no room left</h1>
+            </div>
+
+            <div class="square-area">
+                <div class="square" id="square"></div>
+                <div class="scale-label">Scale: 1 km²</div>
+            </div>
+
+            <div class="slider-container">
+                <label for="year">Year:</label>
+                <input type="range" min="1950" max="2025" value="1950" class="year-slider" id="year-slider">
+                <div id="year-value" class="year-value">1950</div>
+            </div>
+
+        </div>
+
+        <div class="menu1-right">
+          <p>
+            Jakarta, Indonesia's former capital, covers only 661.23 km² and is home to about 11.6 million people, making it one of the world's most densely populated cities with around 17,000 people per square kilometer.
+          </p>
+
+          <div class="chart-container" style="width:100%; max-width:400px; height:300px; margin-top: 20px;">
+            <canvas id="populationChart"></canvas>
+          </div>
+
+          <p>
+            Jakarta's population doubled from 4.5 million in the 1970s to over 10 million by 2016, a 3.6% growth rate that significantly exceeded the national average. By 2030, this growing population, which is expected to hit 13 million, will further worsen problems for residents, including poor sanitation, pollution, and transportation issues.
+          </p>
+
+        </div>
+    </div>
+  </div>
+  <div class="menu-bar">
+    <div class="menu-item active" data-menu="1">there's no room left</div>
+    <div class="menu-item" data-menu="2">i can't see this city anymore</div>
+    <div class="menu-item" data-menu="3">i'm on my way</div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <script>
+    
+    const content = document.getElementById('content');
+    const menuItems = document.querySelectorAll('.menu-item');
+    const defaultMenu1 = content.innerHTML;
+
+    function setupSlider() {
+        const slider = document.getElementById('year-slider'); // updated ID
+        const yearValue = document.getElementById('year-value');
+        if (slider && yearValue) {
+            slider.addEventListener('input', () => {
+                yearValue.textContent = slider.value; // dynamically updates year
+            });
+        }
+    }
+    // call it after DOM is loaded
+    document.addEventListener("DOMContentLoaded", setupSlider);
+
+    menuItems.forEach(item => {
+    item.addEventListener('click', () => {
+        menuItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        const menuNumber = item.getAttribute('data-menu');
+        
+        // Save the selected menu in localStorage
+        localStorage.setItem('activeMenu', menuNumber);
+
+        if (menuNumber === '1') {
+        content.innerHTML = defaultMenu1;
+        setupMenu1();
+        createLineChart(); // <-- run both the slider and dots setup
+        } else if (menuNumber === '2') {
+        loadMenu2();
+        createBarChart();
+        } else if (menuNumber === '3') {
+        loadMenu3();
+        }
+    });
+    });
+
+    function loadMenu2() {
+    content.innerHTML = `
+        <div class="menu2-container">
+        <div class="menu2-left">
+            <h1>i can't see this city anymore</h1>
+            <div class="rectangle-container">
+            <div class="rectangle">
+                <img src="jakarta.webp" alt="Jakarta" class="rectangle-image">
+                <div class="smoke-overlay"></div>
+            </div>
+            <div class="scale-label">Central Jakarta</div>
+            </div>
+            <div class="slider-container">
+            <label for="year2">Year:</label>
+            <input type="range" id="year2" class="year-slider" min="1950" max="2025" value="1950" />
+            <div id="year2-value" class="year-value">1950</div>
+            </div>
+        </div>
+
+        <div class="menu2-right">
+            <p>
+            Over the last 70 years, air quality in Jakarta has deteriorated significantly, evolving from a minor concern to a major crisis. This decline is attributed to rapid urbanization and the corresponding increase in vehicle ownership, which have driven the pollution index upwards.
+            </p>
+            <div class="poll-chart-container" style="width:100%; max-width:400px; height:300px;">
+              <canvas id="pollutionChart"></canvas>
+            </div>
+            <p>
+              The surge in vehicles led to severe, chronic traffic congestion. During peak hours, slow travel speeds increase the release of pollutants like fine particulate matter PM<sub>2.5</sub>, nitrogen oxides NO<sub>2</sub>, and carbon dioxide CO<sub>2</sub>.
+            </p>
+        </div>
+        </div>
+    `;
+
+    const slider = document.getElementById('year2');
+    const yearValue = document.getElementById('year2-value');
+    const smoke = document.querySelector('.smoke-overlay');
+
+    slider.addEventListener('input', () => {
+        yearValue.textContent = slider.value;
+        const opacity = (slider.value - 1950) / (2025 - 1950);
+        smoke.style.opacity = opacity.toFixed(2);
+    });
+    }
+
+    // Get saved menu or default to 1
+    const savedMenu = localStorage.getItem('activeMenu') || '1';
+    const menuToClick = document.querySelector(`.menu-item[data-menu="${savedMenu}"]`);
+
+    // Simulate click on the saved menu
+    if (menuToClick) {
+    menuToClick.click();
+    }
+
+    /* ============ MENU 3 ============ */
+    function loadMenu3() {
+    content.innerHTML = `
+        <div class="menu3-container">
+        <div class="menu3-left">
+            <h1>i'm on my way</h1>
+
+            <div class="bar-set">
+            <div class="bar-title">1950</div>
+            <div class="bar-track-container">
+                <div class="bar-track">
+                <div class="bar-fill" id="bar1"></div>
+                </div>
+                <span class="bar-car" id="car1">🚗</span>
+            </div>
+            <div class="bar-label">25 minutes</div>
+            </div>
+
+            <div class="bar-set">
+            <div class="bar-title">2000</div>
+            <div class="bar-track-container">
+                <div class="bar-track">
+                <div class="bar-fill" id="bar2"></div>
+                </div>
+                <span class="bar-car" id="car2">🚗</span>
+            </div>
+            <div class="bar-label">50 minutes</div>
+            </div>
+
+            <div class="bar-set">
+            <div class="bar-title">2025</div>
+            <div class="bar-track-container">
+                <div class="bar-track">
+                    <div class="bar-fill" id="bar3"></div>
+                </div>
+                <span class="bar-car" id="car3">🚗</span>
+            </div>
+            <div class="bar-label">1 hours 30 minutes</div>
+            </div>
+
+            <div class="bar-axis">
+            <span>Jakarta</span>
+            <span>Bekasi</span>
+            </div>
+        </div>
+
+        <div class="menu3-right">
+            <p>
+            Drivers in Jakarta spent 23 minutes 20 seconds to travel 10 km, and were ranked 30th worst globally for congestion (2023).
+            Bekasi is a sub-urban area near Jakarta about ~25km away. In 1950, it took approximately 25 minutes to commute from Jakarta to Bekasi.
+            </p>
+            <img src="jakarta-bekasi-google-map.png" style="width:100%; height:100%; object-fit: contain;">
+            <p>
+            Average annual growth rate of all registered motor vehicle was ~17.2% between 2000-2010.  
+            </p>
+        </div>
+        </div>
+    `;
+
+    startRaceAnimation();
+    }
+
+    function startRaceAnimation() {
+    const bars = [
+        { id: 'bar1', duration: 27 },
+        { id: 'bar2', duration: 42 },
+        { id: 'bar3', duration: 90 },
+    ];
+
+    function animateBars() {
+        bars.forEach(bar => {
+        const el = document.getElementById(bar.id);
+        const car = document.getElementById('car' + bar.id.slice(-1)); // car1, car2, car3
+        if (el && car) {
+            // Reset
+            el.style.transition = 'none';
+            el.style.width = '0';
+            car.style.transition = 'none';
+            car.style.left = '0';
+        }
+        });
+
+        setTimeout(() => {
+        bars.forEach(bar => {
+            const el = document.getElementById(bar.id);
+            const car = document.getElementById('car' + bar.id.slice(-1));
+            if (el && car) {
+            // Animate bar
+            el.style.transition = `width ${bar.duration}s linear`;
+            el.style.width = '100%';
+            // Animate car
+            car.style.transition = `left ${bar.duration}s linear`;
+            car.style.left = 'calc(100% - 24px)'; // 24px = emoji width
+            }
+        });
+        }, 100);
+
+        const longestDuration = Math.max(...bars.map(b => b.duration));
+        setTimeout(animateBars, longestDuration * 1000 + 500);
+    }
+
+    animateBars();
+    }
+
+    function setupMenu1() {
+        const square = document.getElementById("square");
+        const slider = document.getElementById("year-slider");
+        const yearValue = document.getElementById("year-value");
+
+        const minPeople = 2700;
+        const maxPeople = 16300;
+
+        function updatePeople(year) {
+            const totalYears = 2025 - 1950;
+            const yearProgress = (year - 1950) / totalYears;
+            const numPeople = Math.floor(minPeople + yearProgress * (maxPeople - minPeople));
+
+            square.innerHTML = "";
+
+            for (let i = 0; i < numPeople; i++) {
+                const person = document.createElement("div");
+                person.className = "person";
+                person.style.left = Math.random() * 100 + "%";
+                person.style.top = Math.random() * 100 + "%";
+                square.appendChild(person);
+            }
+
+            yearValue.textContent = year; // update the displayed year
+        }
+
+        // initial population
+        updatePeople(parseInt(slider.value));
+
+        // slider event
+        slider.addEventListener("input", () => {
+            updatePeople(parseInt(slider.value));
+        });
+    }
+
+    function createLineChart() {
+      fetch('pop_data.json')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to load JSON file');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const years = data.map(d => d.year);
+          const populations = data.map(d => d.population);
+
+          const ctx = document.getElementById('populationChart');
+          new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: years,
+              datasets: [{
+                label: 'Population (people)',
+                data: populations,
+                borderColor: 'red',
+                backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                tension: 0.3,
+                pointRadius: 3,
+                pointHoverRadius: 6,
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                x: {
+                  title: { display: true, text: 'Year' },
+                  ticks: { autoSkip: true, maxTicksLimit: 10 }
+                },
+                y: {
+                  title: { display: true, text: 'Population' },
+                  beginAtZero: true
+                }
+              },
+              plugins: {
+                tooltip: {
+                  enabled: true,
+                  callbacks: {
+                    label: function(context) {
+                      return `Population: ${context.parsed.y.toLocaleString()}`;
+                    }
+                  }
+                },
+                legend: {
+                  display: false
+                }
+              }
+            }
+          });
+        })
+        .catch(error => console.error('Error loading chart data:', error));
+    }
+
+    function createBarChart() {
+      fetch('poll_data.json')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to load JSON file');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const years = data.map(d => d.tahun);
+          const pm25 = data.map(d => d.pm25);
+          const pm10 = data.map(d => d.pm10);
+          const so2 = data.map(d => d.so2);
+          const co = data.map(d => d.co);
+          const o3 = data.map(d => d.o3);
+          const no2 = data.map(d => d.no2);
+
+          const ctx = document.getElementById('pollutionChart');
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: years,
+              datasets: [{
+                label: 'PM2.5',
+                data: pm25,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+              },
+              {
+                label: 'PM10',
+                data: pm10,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+              },
+              {
+                label: 'SO2',
+                data: so2,
+                backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                borderColor: 'rgba(255, 206, 86, 1)',
+                borderWidth: 1
+              },
+              {
+                label: 'CO',
+                data: co,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+              },
+              {
+                label: 'O3',
+                data: o3,
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+              },
+              {
+                label: 'NO2',
+                data: no2,
+                backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                borderColor: 'rgba(255, 159, 64, 1)',
+                borderWidth: 1
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                x: {
+                  title: { display: true, text: 'Year' },
+                  ticks: { autoSkip: true, maxTicksLimit: 10 }
+                },
+                y: {
+                  title: { display: true, text: 'Pollution Level' },
+                  beginAtZero: true
+                }
+              },
+              plugins: {
+                tooltip: {
+                  enabled: true,
+                  callbacks: {
+                    label: function(context) {
+                      return `Pollution Level: ${context.parsed.y.toLocaleString()}`;
+                    }
+                  }
+                },
+                legend: {
+                  display: true
+                }
+              }
+            }
+          });
+        })
+        .catch(error => console.error('Error loading chart data:', error));
+    }
+
+    const refPanel = document.getElementById('refPanel');
+    const refTab = document.getElementById('refTab');
+    const overlay = document.getElementById('overlay');
+
+    refTab.addEventListener('click', () => {
+      refPanel.style.left = '0';  // slide panel in
+      overlay.style.display = 'block';
+    });
+
+    overlay.addEventListener('click', () => {
+      refPanel.style.left = '-33%';  // hide panel
+      overlay.style.display = 'none';
+    });
+
+  </script>
+
+</body>
+</html>
